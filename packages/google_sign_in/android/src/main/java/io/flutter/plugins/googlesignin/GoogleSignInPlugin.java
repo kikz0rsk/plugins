@@ -77,7 +77,9 @@ public class GoogleSignInPlugin implements MethodCallHandler {
         String signInOption = call.argument("signInOption");
         List<String> requestedScopes = call.argument("scopes");
         String hostedDomain = call.argument("hostedDomain");
-        delegate.init(result, signInOption, requestedScopes, hostedDomain);
+        String clientId = call.argument("clientId");
+        System.out.println(clientId);
+        delegate.init(result, signInOption, requestedScopes, hostedDomain, clientId);
         break;
 
       case METHOD_SIGN_IN_SILENTLY:
@@ -224,7 +226,7 @@ public class GoogleSignInPlugin implements MethodCallHandler {
      */
     @Override
     public void init(
-        Result result, String signInOption, List<String> requestedScopes, String hostedDomain) {
+        Result result, String signInOption, List<String> requestedScopes, String hostedDomain, String clientId) {
       // We're not initialized until we receive `onConnected`.
       // If initialization fails, we'll receive `onConnectionFailed`
       checkAndSetPendingOperation(METHOD_INIT, result);
@@ -249,14 +251,18 @@ public class GoogleSignInPlugin implements MethodCallHandler {
         // by the google-services Gradle script.
         // TODO(jackson): Perhaps we should provide a mechanism to override this
         // behavior.
-        int clientIdIdentifier =
-            registrar
-                .context()
-                .getResources()
-                .getIdentifier(
-                    "default_web_client_id", "string", registrar.context().getPackageName());
-        if (clientIdIdentifier != 0) {
-          optionsBuilder.requestIdToken(registrar.context().getString(clientIdIdentifier));
+        if(Strings.isNullOrEmpty(clientId)) {
+            int clientIdIdentifier =
+                registrar
+                    .context()
+                    .getResources()
+                    .getIdentifier(
+                        "default_web_client_id", "string", registrar.context().getPackageName());
+            if (clientIdIdentifier != 0) {
+              optionsBuilder.requestIdToken(registrar.context().getString(clientIdIdentifier));
+            }
+        } else {
+            optionsBuilder.requestServerAuthCode(clientId);
         }
         for (String scope : requestedScopes) {
           optionsBuilder.requestScopes(new Scope(scope));
@@ -445,6 +451,7 @@ public class GoogleSignInPlugin implements MethodCallHandler {
         response.put("id", account.getId());
         response.put("idToken", account.getIdToken());
         response.put("displayName", account.getDisplayName());
+        response.put("authCode", account.getServerAuthCode());
         if (account.getPhotoUrl() != null) {
           response.put("photoUrl", account.getPhotoUrl().toString());
         }

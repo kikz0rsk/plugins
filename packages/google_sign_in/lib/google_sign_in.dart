@@ -36,6 +36,7 @@ class GoogleSignInAccount implements GoogleIdentity {
         email = data['email'],
         id = data['id'],
         photoUrl = data['photoUrl'],
+        authCode = data['authCode'],
         _idToken = data['idToken'] {
     assert(id != null);
   }
@@ -59,6 +60,8 @@ class GoogleSignInAccount implements GoogleIdentity {
 
   @override
   final String photoUrl;
+
+  String authCode;
 
   final String _idToken;
   final GoogleSignIn _googleSignIn;
@@ -124,6 +127,7 @@ class GoogleSignInAccount implements GoogleIdentity {
       'email': email,
       'id': id,
       'photoUrl': photoUrl,
+      'authCode': authCode
     };
     return 'GoogleSignInAccount:$data';
   }
@@ -159,6 +163,8 @@ class GoogleSignIn {
   /// Domain to restrict sign-in to.
   final String hostedDomain;
 
+  final String clientId;
+
   /// Initializes global sign-in configuration settings.
   ///
   /// The [signInOption] determines the user experience. [SigninOption.games]
@@ -173,7 +179,7 @@ class GoogleSignIn {
   /// The [hostedDomain] argument specifies a hosted domain restriction. By
   /// setting this, sign in will be restricted to accounts of the user in the
   /// specified domain. By default, the list of accounts will not be restricted.
-  GoogleSignIn({this.signInOption, this.scopes, this.hostedDomain});
+  GoogleSignIn({this.signInOption, this.scopes, this.hostedDomain, this.clientId});
 
   /// Factory for creating default sign in user experience.
   factory GoogleSignIn.standard({List<String> scopes, String hostedDomain}) {
@@ -222,6 +228,7 @@ class GoogleSignIn {
         'signInOption': (signInOption ?? SignInOption.standard).toString(),
         'scopes': scopes ?? <String>[],
         'hostedDomain': hostedDomain,
+        'clientId': clientId
       })
         ..catchError((dynamic _) {
           // Invalidate initialization if it errored out.
