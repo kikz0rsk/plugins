@@ -78,7 +78,6 @@ public class GoogleSignInPlugin implements MethodCallHandler {
         List<String> requestedScopes = call.argument("scopes");
         String hostedDomain = call.argument("hostedDomain");
         String clientId = call.argument("clientId");
-        System.out.println(clientId);
         delegate.init(result, signInOption, requestedScopes, hostedDomain, clientId);
         break;
 

@@ -80,6 +80,9 @@ static NSString *const kErrorReasonSignInFailed = @"sign_in_failed";
         [GIDSignIn sharedInstance].clientID = plist[kClientIdKey];
         [GIDSignIn sharedInstance].scopes = call.arguments[@"scopes"];
         [GIDSignIn sharedInstance].hostedDomain = call.arguments[@"hostedDomain"];
+        if(call.arguments[@"clientId"]) {
+          [GIDSignIn sharedInstance].serverClientId = call.arguments[@"clientId"];
+        }
         result(nil);
       } else {
         result([FlutterError errorWithCode:@"missing-config"
@@ -169,6 +172,7 @@ static NSString *const kErrorReasonSignInFailed = @"sign_in_failed";
       @"email" : user.profile.email ?: [NSNull null],
       @"id" : user.userID ?: [NSNull null],
       @"photoUrl" : [photoUrl absoluteString] ?: [NSNull null],
+      @"authCode": user.serverAuthCode ?: [NSNull null]
     }
                        error:nil];
   }
