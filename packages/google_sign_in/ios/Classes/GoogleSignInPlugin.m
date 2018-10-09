@@ -81,7 +81,7 @@ static NSString *const kErrorReasonSignInFailed = @"sign_in_failed";
         [GIDSignIn sharedInstance].scopes = call.arguments[@"scopes"];
         [GIDSignIn sharedInstance].hostedDomain = call.arguments[@"hostedDomain"];
         if(call.arguments[@"clientId"]) {
-          [GIDSignIn sharedInstance].serverClientId = call.arguments[@"clientId"];
+          [GIDSignIn sharedInstance].serverClientID = call.arguments[@"clientId"];
         }
         result(nil);
       } else {
